@@ -25,6 +25,7 @@ public class UserController {
 
 
     // this is add user method
+    //checking also done.
     @PostMapping("/addUser")
     public ResponseEntity<String> createUser(@RequestBody User user){
 
