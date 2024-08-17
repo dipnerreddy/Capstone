@@ -22,6 +22,9 @@ public class UserController {
     @Autowired
     private LoginLogRepository loginLogRepository;
 
+
+
+    // this is add user method
     @PostMapping("/addUser")
     public ResponseEntity<String> createUser(@RequestBody User user){
 
@@ -37,6 +40,7 @@ public class UserController {
         }
     }
 
+    // this is a login method
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody User loginUser) {
         // Extract mobile number and password from the User object
