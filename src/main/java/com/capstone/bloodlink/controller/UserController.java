@@ -1,19 +1,25 @@
 package com.capstone.bloodlink.controller;
 
 
+import com.capstone.bloodlink.entity.PasswordResetRequest;
 import com.capstone.bloodlink.entity.User;
 import com.capstone.bloodlink.logs.LoginLog;
 import com.capstone.bloodlink.repository.LoginLogRepository;
+import com.capstone.bloodlink.repository.PasswordResetRequestRepository;
 import com.capstone.bloodlink.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
+@RequestMapping("/userRepository")
 public class UserController {
 
     @Autowired
@@ -22,7 +28,10 @@ public class UserController {
     @Autowired
     private LoginLogRepository loginLogRepository;
 
+    @Autowired
+    private PasswordResetRequestRepository passwordResetRequestRepository;
 
+    private static final SecureRandom random = new SecureRandom();
 
     // this is add user method
     //checking also done.
@@ -76,7 +85,62 @@ public class UserController {
         }
     }
 
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> request) {
+        String mobileNo = request.get("mobileNo");
 
+        User user = userRepository.findByMobileNo(mobileNo);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User does not exist. Please register.");
+        }
+
+        // Generate OTP
+        String otp = String.format("%04d", random.nextInt(10000));
+
+        // Store OTP in the database
+        PasswordResetRequest resetRequest = new PasswordResetRequest(mobileNo, otp, LocalDateTime.now());
+        passwordResetRequestRepository.save(resetRequest);
+
+        // Send OTP to user (you need to implement this)
+        // sendOtpToUser(mobileNo, otp);
+
+        return ResponseEntity.ok("OTP sent to mobile number: " + mobileNo);
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
+        String mobileNo = request.get("mobileNo");
+        String otp = request.get("otp");
+        String newPassword = request.get("newPassword");
+        String confirmPassword = request.get("confirmPassword");
+
+        PasswordResetRequest resetRequest = passwordResetRequestRepository.findByMobileNo(mobileNo);
+        if (resetRequest == null) {
+            return ResponseEntity.badRequest().body("Invalid request. OTP not found.");
+        }
+
+        // Check OTP validity
+        if (!resetRequest.getOtp().equals(otp)) {
+            return ResponseEntity.badRequest().body("Incorrect OTP. Please try again.");
+        }
+
+        // Validate new passwords
+        if (!newPassword.equals(confirmPassword)) {
+            return ResponseEntity.badRequest().body("Passwords do not match.");
+        }
+
+        // Update user's password
+        User user = userRepository.findByMobileNo(mobileNo);
+        if (user != null) {
+            user.setPassword(newPassword); // Ensure you hash the password before saving
+            userRepository.save(user);
+        }
+
+        // Delete OTP request after successful reset
+        passwordResetRequestRepository.delete(resetRequest);
+
+        return ResponseEntity.ok("Password reset successful.");
+    }
 
 
 }
