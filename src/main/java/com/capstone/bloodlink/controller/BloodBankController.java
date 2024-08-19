@@ -64,21 +64,42 @@ public class BloodBankController {
     }
 
 
+//    @PostMapping("/update")
+//    public ResponseEntity<String> UpdateBloodBank(@RequestBody BloodBank bloodBank){
+//
+//        String email = bloodBank.getEmail();
+//        int oPositive=bloodBank.getoPositive();
+//        int oNegative=bloodBank.getoPositive();
+//        int aPositive=bloodBank.getaPositive();
+//        int aNegative=bloodBank.getaPositive();
+//        int bPositive=bloodBank.getbPositive();
+//        int bNegative=bloodBank.getbPositive();
+//
+////        BloodBank update = bloodBankRepository.save(new BloodBank(email,oPositive,oNegative,aPositive,aNegative,bPositive,bNegative));
+//
+//        bloodBankDAO.updateBloodBank(email,oPositive,oNegative,aPositive,aNegative,bPositive,bNegative);
+//        return ResponseEntity.ok("Updation is done");
+//
+//    }
+
+
     @PostMapping("/update")
-    public ResponseEntity<String> UpdateBloodBank(@RequestBody BloodBank bloodBank){
+    public ResponseEntity<String> UpdateBloodBank(@RequestBody BloodBank bloodBank) {
 
         String email = bloodBank.getEmail();
-        int oPositive=bloodBank.getoPositive();
-        int oNegative=bloodBank.getoPositive();
-        int aPositive=bloodBank.getaPositive();
-        int aNegative=bloodBank.getaPositive();
-        int bPositive=bloodBank.getbPositive();
-        int bNegative=bloodBank.getbPositive();
 
-//        BloodBank update = bloodBankRepository.save(new BloodBank(email,oPositive,oNegative,aPositive,aNegative,bPositive,bNegative));
+        // Fix: Ensure correct getters are used for each blood type
+        int oPositive = bloodBank.getoPositive();
+        int oNegative = bloodBank.getoNegative();  // This was incorrectly set to getoPositive()
+        int aPositive = bloodBank.getaPositive();
+        int aNegative = bloodBank.getaNegative();  // This was incorrectly set to getaPositive()
+        int bPositive = bloodBank.getbPositive();
+        int bNegative = bloodBank.getbNegative();  // This was incorrectly set to getbPositive()
 
-        bloodBankDAO.updateBloodBank(email,oPositive,oNegative,aPositive,aNegative,bPositive,bNegative);
+        // Now call the DAO method to update the blood bank
+        bloodBankDAO.updateBloodBank(email, oPositive, oNegative, aPositive, aNegative, bPositive, bNegative);
+
         return ResponseEntity.ok("Updation is done");
-
     }
+
 }

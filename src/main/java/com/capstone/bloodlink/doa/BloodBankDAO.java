@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 public class BloodBankDAO {
     @PersistenceContext
     private EntityManager entityManager;
-
-
     @Transactional
     public void updateBloodBank(String email, int oPositive, int oNegative, int aPositive, int aNegative, int bPositive, int bNegative) {
         Query updateQuery = entityManager
@@ -26,5 +24,4 @@ public class BloodBankDAO {
         updateQuery.setParameter("email",email);
         int updatedCount = updateQuery.executeUpdate();
     }
-
 }
