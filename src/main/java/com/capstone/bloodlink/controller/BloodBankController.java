@@ -1,77 +1,84 @@
 package com.capstone.bloodlink.controller;
 
+
+import com.capstone.bloodlink.doa.BloodBankDAO;
 import com.capstone.bloodlink.entity.BloodBank;
 import com.capstone.bloodlink.entity.User;
 import com.capstone.bloodlink.logs.BloodBankLoginLog;
 import com.capstone.bloodlink.logs.LoginLog;
 import com.capstone.bloodlink.repository.BloodBankLoginLogRepository;
 import com.capstone.bloodlink.repository.BloodBankRepository;
-import com.capstone.bloodlink.service.BloodGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/bloodBank")
 public class BloodBankController {
-
-    @Autowired
-    private BloodGroupService bloodGroupService;
     @Autowired
     private BloodBankRepository bloodBankRepository;
+
     @Autowired
     private BloodBankLoginLogRepository bloodBankLoginLogRepository;
 
+    @Autowired
+    private BloodBankDAO bloodBankDAO;
+
     @PostMapping("/login")
-    public ResponseEntity<String> loginBloodBankUser(@RequestBody BloodBank bloodBank) {
+    public ResponseEntity<String> loginBloodBank(@RequestBody BloodBank bloodBank) {
+        // Extract mobile number and password from the User object
         String email = bloodBank.getEmail();
         String password = bloodBank.getPassword();
 
-        // Query the database for a blood bank with the given email
-        Optional<BloodBank> bloodBankOpt = Optional.ofNullable(bloodBankRepository.findByEmail(email));
+        // Query the database for a user with the given mobile number
+        BloodBank user = bloodBankRepository.findByEmail(email);
 
-        if (bloodBankOpt.isPresent()) {
-            BloodBank dbBloodBank = bloodBankOpt.get();
-            if (dbBloodBank.getPassword().equals(password)) {
+        // Record the login attempt with the current timestamp
+        LocalDateTime loginTime = LocalDateTime.now();
+        String status;
+
+        if (user == null) {
+            // If user is not found, log the failure
+            status = "F";
+            bloodBankLoginLogRepository.save(new BloodBankLoginLog(null, loginTime, status));
+            return ResponseEntity.badRequest().body("No account associated with mobile number: " + email + ". Please register.");
+        } else {
+            // If user exists, check if the password matches
+            if (user.getPassword().equals(password)) {
                 // Log the successful login
-                logLoginAttempt(dbBloodBank.getId(), true);
-                return ResponseEntity.ok("Login successful for user: " + email);
+                status = "S";
+                bloodBankLoginLogRepository.save(new BloodBankLoginLog(user.getId(), loginTime, status));
+                return ResponseEntity.ok("Login successful for user: " + user.getBloodBankName());
             } else {
                 // Log the failure due to incorrect password
-                logLoginAttempt(dbBloodBank.getId(), false);
+                status = "F";
+                bloodBankLoginLogRepository.save(new BloodBankLoginLog(user.getId(), loginTime, status));
                 return ResponseEntity.badRequest().body("Incorrect password. Please try again.");
             }
-        } else {
-            // Log the failure due to non-existing email
-            logLoginAttempt(null, false);
-            return ResponseEntity.badRequest().body("No Blood Bank is associated with given email: " + email + ". Please Contact DIPNER TECH SOLUTIONS.");
         }
     }
 
-    private void logLoginAttempt(Long bloodBankId, boolean success) {
-        String status = success ? "S" : "F";
-        BloodBankLoginLog log = new BloodBankLoginLog(bloodBankId, LocalDateTime.now(), status);
-        bloodBankLoginLogRepository.save(log);
-    }
 
     @PostMapping("/update")
-    public ResponseEntity<String> updateBloodGroup(
-            @RequestParam int oPositive,
-            @RequestParam int oNegative,
-            @RequestParam int aPositive,
-            @RequestParam int aNegative,
-            @RequestParam int bPositive,
-            @RequestParam int bNegative) {
+    public ResponseEntity<String> UpdateBloodBank(@RequestBody BloodBank bloodBank){
 
-        // Retrieve the currently authenticated blood bank
-        BloodBank loggedInBloodBank = bloodGroupService.getLoggedInBloodBank();
+        String email = bloodBank.getEmail();
+        int oPositive=bloodBank.getoPositive();
+        int oNegative=bloodBank.getoPositive();
+        int aPositive=bloodBank.getaPositive();
+        int aNegative=bloodBank.getaPositive();
+        int bPositive=bloodBank.getbPositive();
+        int bNegative=bloodBank.getbPositive();
 
-        // Update the blood group values for the logged-in blood bank
-        bloodGroupService.updateBloodGroup(loggedInBloodBank, oPositive, oNegative, aPositive, aNegative, bPositive, bNegative);
+//        BloodBank update = bloodBankRepository.save(new BloodBank(email,oPositive,oNegative,aPositive,aNegative,bPositive,bNegative));
 
-        return ResponseEntity.ok("Blood group updated successfully.");
+        bloodBankDAO.updateBloodBank(email,oPositive,oNegative,aPositive,aNegative,bPositive,bNegative);
+        return ResponseEntity.ok("Updation is done");
+
     }
 }

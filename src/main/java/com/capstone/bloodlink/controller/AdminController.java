@@ -2,7 +2,6 @@ package com.capstone.bloodlink.controller;
 
 
 import com.capstone.bloodlink.entity.BloodBank;
-import com.capstone.bloodlink.entity.User;
 import com.capstone.bloodlink.repository.BloodBankRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+
     @Autowired
     private BloodBankRepository bloodBankRepository;
 
@@ -28,7 +28,7 @@ public class AdminController {
         } else {
             // If no user is found with the same mobile number, create a new user
             BloodBank newUser = bloodBankRepository.save(bloodBank);
-            return ResponseEntity.ok("USER {" + newUser.getName() + "} WITH ID {" + newUser.getId() + "} IS SAVED TO DATABASE.");
+            return ResponseEntity.ok("BloodBank {" + newUser.getBloodBankName() + "} WITH ID {" + newUser.getId() + "} IS SAVED TO DATABASE.");
         }
     }
 }

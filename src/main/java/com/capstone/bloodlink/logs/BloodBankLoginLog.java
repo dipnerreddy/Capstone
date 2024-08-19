@@ -1,10 +1,10 @@
 package com.capstone.bloodlink.logs;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,21 +13,21 @@ public class BloodBankLoginLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long bloodBankId;
-    private LocalDateTime timestamp;
-    private String status; // "S" for success, "F" for failure
+    private LocalDateTime loginTime;
+    private String status;
 
     // Constructors
-    public BloodBankLoginLog() {
-    }
+    public BloodBankLoginLog() {}
 
-    public BloodBankLoginLog(Long bloodBankId, LocalDateTime timestamp, String status) {
+    public BloodBankLoginLog(Long bloodBankId, LocalDateTime loginTime, String status) {
         this.bloodBankId = bloodBankId;
-        this.timestamp = timestamp;
+        this.loginTime = loginTime;
         this.status = status;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -44,12 +44,12 @@ public class BloodBankLoginLog {
         this.bloodBankId = bloodBankId;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public LocalDateTime getLoginTime() {
+        return loginTime;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setLoginTime(LocalDateTime loginTime) {
+        this.loginTime = loginTime;
     }
 
     public String getStatus() {

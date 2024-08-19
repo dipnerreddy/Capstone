@@ -2,7 +2,6 @@ package com.capstone.bloodlink.entity;
 
 import jakarta.persistence.*;
 
-import java.util.List;
 
 @Entity
 @Table(name = "bloodBank")
@@ -10,22 +9,38 @@ public class BloodBank {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String email;
+    private String bloodBankName;
     private String password;
+    private String email;
+    private String location;
+    private int oPositive;
+    private int oNegative;
+    private int aPositive;
+    private int aNegative;
+    private int bPositive;
+    private int bNegative;
 
-    @OneToMany(mappedBy = "bloodBank", cascade = CascadeType.ALL)
-    private List<BloodGroup> bloodGroups;
-
-    public BloodBank(Long id, String name, String email, String password) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
 
     public BloodBank() {
     }
+
+    public BloodBank(String bloodBankName, String password, String email, String location) {
+        this.bloodBankName = bloodBankName;
+        this.password = password;
+        this.email = email;
+        this.location = location;
+    }
+
+    public BloodBank( String email, int oPositive, int oNegative, int aPositive, int aNegative, int bPositive, int bNegative) {
+        this.email = email;
+        this.oPositive = oPositive;
+        this.oNegative = oNegative;
+        this.aPositive = aPositive;
+        this.aNegative = aNegative;
+        this.bPositive = bPositive;
+        this.bNegative = bNegative;
+    }
+
 
     public Long getId() {
         return id;
@@ -35,12 +50,20 @@ public class BloodBank {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getBloodBankName() {
+        return bloodBankName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setBloodBankName(String bloodBankName) {
+        this.bloodBankName = bloodBankName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -51,11 +74,59 @@ public class BloodBank {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getLocation() {
+        return location;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public int getoPositive() {
+        return oPositive;
+    }
+
+    public void setoPositive(int oPositive) {
+        this.oPositive = oPositive;
+    }
+
+    public int getoNegative() {
+        return oNegative;
+    }
+
+    public void setoNegative(int oNegative) {
+        this.oNegative = oNegative;
+    }
+
+    public int getaPositive() {
+        return aPositive;
+    }
+
+    public void setaPositive(int aPositive) {
+        this.aPositive = aPositive;
+    }
+
+    public int getaNegative() {
+        return aNegative;
+    }
+
+    public void setaNegative(int aNegative) {
+        this.aNegative = aNegative;
+    }
+
+    public int getbPositive() {
+        return bPositive;
+    }
+
+    public void setbPositive(int bPositive) {
+        this.bPositive = bPositive;
+    }
+
+    public int getbNegative() {
+        return bNegative;
+    }
+
+    public void setbNegative(int bNegative) {
+        this.bNegative = bNegative;
     }
 }
