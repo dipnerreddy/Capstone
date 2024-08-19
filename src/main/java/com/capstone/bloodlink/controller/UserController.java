@@ -38,8 +38,6 @@ public class UserController {
     private static final SecureRandom random = new SecureRandom();
     private String jsonData;
 
-    // this is add user method
-    //checking also done.
     @PostMapping("/addUser")
     public ResponseEntity<String> createUser(@RequestBody User user){
 
@@ -55,7 +53,6 @@ public class UserController {
         }
     }
 
-    // this is a login method
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody User loginUser) {
         // Extract mobile number and password from the User object
@@ -105,10 +102,6 @@ public class UserController {
         // Store OTP in the database
         PasswordResetRequest resetRequest = new PasswordResetRequest(mobileNo, otp, LocalDateTime.now());
         passwordResetRequestRepository.save(resetRequest);
-
-        // Send OTP to user (you need to implement this)
-        // sendOtpToUser(mobileNo, otp);
-
         return ResponseEntity.ok("OTP sent to mobile number: " + mobileNo);
     }
 
@@ -146,125 +139,6 @@ public class UserController {
 
         return ResponseEntity.ok("Password reset successful.");
     }
-
-//    @GetMapping("/search")
-//    public ResponseEntity<String> searchBloodBank(@RequestBody BloodBank bloodBank){
-//        String location=bloodBank.getLocation();
-//        BloodBank isPresent=bloodBankRepository.findByLocation(location);
-//        Gson gson = new Gson();
-//        StringBuilder builder = new StringBuilder();
-//
-//        if(isPresent != null){
-//
-//
-//           List<BloodBank> data = bloodBankDAO.allBloodBanks(location);
-//           jsonData = gson.toJson(data);
-//           String replaceData=jsonData.replace("\"", "").replace("id:,", "")
-//                   .replace("bloodBankName:"," ").replace(":"," ")
-//                   .replace("},{", "}\r\n{").replace("[", " ").replace(",", "")
-//                   .replace("password","").replace("email","").replace("location","")
-//                   .replace("oPositive","O+").replace("oNegative","O-").replace("aPositive","A+").replace("aNegative","A-")
-//                   .replace("bPositive","B+").replace("bNegative","B-").replace("]",",");
-//           builder.append(replaceData);
-//           String sharedData = new String(builder);
-//            return  ResponseEntity.ok(sharedData);
-//        }
-//        else {
-//          return  ResponseEntity.ok("The App Serviec is not avalible in that location");
-//        }
-//
-//    }
-
-
-//    @GetMapping("/search")
-//    public ResponseEntity<String> searchBloodBank(@RequestBody BloodBank bloodBank) {
-//        String location = bloodBank.getLocation();
-//        BloodBank isPresent = bloodBankRepository.findByLocation(location);
-//        Gson gson = new Gson();
-//        StringBuilder builder = new StringBuilder();
-//
-//        if (isPresent != null) {
-//            // Fetch all blood banks in the specified location
-//            List<BloodBank> data = bloodBankDAO.allBloodBanks(location);
-//
-//            // Create a sanitized list to hold only the required fields
-//            List<Map<String, Object>> sanitizedData = new ArrayList<>();
-//
-//            for (BloodBank bank : data) {
-//                Map<String, Object> sanitizedBank = new HashMap<>();
-//                sanitizedBank.put("bloodBankName", bank.getBloodBankName());
-//                sanitizedBank.put("oPositive", bank.getoPositive());
-//                sanitizedBank.put("oNegative", bank.getoNegative());
-//                sanitizedBank.put("aPositive", bank.getaPositive());
-//                sanitizedBank.put("aNegative", bank.getaNegative());
-//                sanitizedBank.put("bPositive", bank.getaPositive());
-//                sanitizedBank.put("bNegative", bank.getaNegative());
-//                sanitizedData.add(sanitizedBank);  // Only include needed fields
-//            }
-//            String jsonData = gson.toJson(sanitizedData);
-//            String replaceData=jsonData.replace("\"", " ").replace("oPositive","O+")
-//                    .replace("oNegative","O-").replace("aPositive","A+")
-//                    .replace("aNegative","A-").replace("bPositive","B+").replace("bloodBankName =","")
-//                    .replace("bNegative","B-").replace("},{", "}\r\n{").replace(":","= ")
-//                    .replace("["," ").replace("]"," ");
-//
-//            builder.append(replaceData);
-//                     String sharedData = new String(builder);
-//                        return  ResponseEntity.ok(sharedData);
-//
-//
-//        } else {
-//            return ResponseEntity.ok("The App Service is not available in that location");
-//        }
-//    }
-
-//    @GetMapping("/search")
-//    public ResponseEntity<String> searchBloodBank(@RequestBody BloodBank bloodBank) {
-//        String location = bloodBank.getLocation();
-//        BloodBank isPresent = bloodBankRepository.findByLocation(location);
-//        Gson gson = new Gson();
-//        StringBuilder builder = new StringBuilder();
-//
-//        if (isPresent != null) {
-//            // Fetch all blood banks in the specified location
-//            List<BloodBank> data = bloodBankDAO.allBloodBanks(location);
-//
-//            // Create a sanitized list to hold only the required fields
-//            List<Map<String, Object>> sanitizedData = new ArrayList<>();
-//
-//            for (BloodBank bank : data) {
-//                Map<String, Object> sanitizedBank = new HashMap<>();
-//                sanitizedBank.put("bloodBankName", bank.getBloodBankName());
-//                sanitizedBank.put("O+", bank.getoPositive());
-//                sanitizedBank.put("O-", bank.getoNegative());
-//                sanitizedBank.put("A+", bank.getaPositive());
-//                sanitizedBank.put("A-", bank.getaNegative());
-//                sanitizedBank.put("B+", bank.getbPositive());
-//                sanitizedBank.put("B-", bank.getbNegative());
-//                sanitizedData.add(sanitizedBank);  // Only include needed fields
-//            }
-//
-//            // Build the desired string format
-//            for (Map<String, Object> bank : sanitizedData) {
-//                builder.append("{ ");
-//                // Ensure bloodBankName is replaced by a space, but values are correctly formatted
-//                for (Map.Entry<String, Object> entry : bank.entrySet()) {
-//                    if (!entry.getKey().equals("bloodBankName")) {
-//                        builder.append(entry.getKey()).append(" = ").append(entry.getValue()).append(", ");
-//                    }
-//                }
-//                // Append the blood bank name separately without "bloodBankName="
-//                builder.append(" ").append(bank.get("bloodBankName")).append(" }").append("\r\n");
-//            }
-//
-//            String sharedData = builder.toString().trim();  // Trim to remove any extra spaces/new lines
-//            return ResponseEntity.ok(sharedData);
-//        } else {
-//            return ResponseEntity.ok("The App Service is not available in that location");
-//        }
-//    }
-
-
     @GetMapping("/search")
     public ResponseEntity<String> searchBloodBank(@RequestBody BloodBank bloodBank) {
         String location = bloodBank.getLocation();
