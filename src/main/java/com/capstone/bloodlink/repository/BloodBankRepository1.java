@@ -6,9 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface BloodBankRepository extends JpaRepository<BloodBank,Long> {
-    BloodBank findByEmail(String email);
-    List<BloodBank> findByLocation(String location);
-//    List<BloodBank> findBy
+public interface BloodBankRepository1 extends JpaRepository<BloodBank,Long> {
+    List<BloodBank> findByEmail(String email);
+
 
 }

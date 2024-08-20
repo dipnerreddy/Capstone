@@ -6,6 +6,8 @@ import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class BloodBankDAO {
@@ -24,4 +26,5 @@ public class BloodBankDAO {
         updateQuery.setParameter("email",email);
         int updatedCount = updateQuery.executeUpdate();
     }
+
 }
