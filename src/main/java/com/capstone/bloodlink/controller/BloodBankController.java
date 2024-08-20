@@ -15,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/bloodBank")
@@ -89,8 +86,7 @@ public class BloodBankController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<String> searchBloodBank(@RequestParam String email) {
-//        List<BloodBank> bloodBanks = bloodBankRepository1.findByEmail(email);
+    public ResponseEntity<List<Map<String, Object>>> searchBloodBank(@RequestParam String email) {
         List<BloodBank> bloodBanks = bloodBankRepository1.findByEmail(email);
 
         if (!bloodBanks.isEmpty()) {
@@ -108,24 +104,13 @@ public class BloodBankController {
                 sanitizedData.add(sanitizedBank);
             }
 
-            // Convert to JSON
-            Gson gson = new Gson();
-            String jsonData = gson.toJson(sanitizedData);
-
-            // Clean up the data to remove "bloodBankName = " properly and avoid the trailing '='
-            String replaceData = jsonData
-                    .replace("\"", " ")                      // Remove quotes
-                    .replace(" = ", " ")                     // Clean up any leftover equal signs
-                    .replace(" ,", ",")                      // Handle commas after removal
-                    .replace("},{", "}\r\n{")                // Format to print each bank on a new line
-                    .replace(":", "= ")                      // Convert colon to equal for formatting
-                    .replace("[", " ")                       // Clean up brackets
-                    .replace("]", " ");                      // Clean up brackets
-
-            return ResponseEntity.ok(replaceData.trim());
+            // Return the data as JSON
+            return ResponseEntity.ok(sanitizedData);
         } else {
-            return ResponseEntity.ok("The App Service is not available in that location");
+            // Return a message indicating no data found
+            return ResponseEntity.ok(Collections.singletonList(Collections.singletonMap("message", "No data available")));
         }
     }
+
 
 }
