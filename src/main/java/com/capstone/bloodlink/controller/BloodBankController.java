@@ -89,8 +89,8 @@ public class BloodBankController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<String> searchBloodBank(@RequestBody BloodBank bloodBank) {
-        String email = bloodBank.getEmail();
+    public ResponseEntity<String> searchBloodBank(@RequestParam String email) {
+//        List<BloodBank> bloodBanks = bloodBankRepository1.findByEmail(email);
         List<BloodBank> bloodBanks = bloodBankRepository1.findByEmail(email);
 
         if (!bloodBanks.isEmpty()) {
