@@ -31,36 +31,68 @@ public class BloodBankController {
     @Autowired
     private BloodBankDAO bloodBankDAO;
 
+    // @PostMapping("/login")
+    // public ResponseEntity<String> loginBloodBank(@RequestBody BloodBank bloodBank) {
+    //     // Extract mobile number and password from the User object
+    //     String email = bloodBank.getEmail();
+    //     String password = bloodBank.getPassword();
+
+    //     // Query the database for a user with the given mobile number
+    //     BloodBank user = bloodBankRepository.findByEmail(email);
+
+    //     // Record the login attempt with the current timestamp
+    //     LocalDateTime loginTime = LocalDateTime.now();
+    //     String status;
+
+    //     if (user == null) {
+    //         // If user is not found, log the failure
+    //         status = "F";
+    //         bloodBankLoginLogRepository.save(new BloodBankLoginLog(null, loginTime, status));
+    //         return ResponseEntity.badRequest().body("No account associated with mobile number: " + email + ". Please register.");
+    //     } else {
+    //         // If user exists, check if the password matches
+    //         if (user.getPassword().equals(password)) {
+    //             // Log the successful login
+    //             status = "S";
+    //             bloodBankLoginLogRepository.save(new BloodBankLoginLog(user.getId(), loginTime, status));
+    //             return ResponseEntity.ok("Login successful for user: " + user.getBloodBankName());
+    //         } else {
+    //             // Log the failure due to incorrect password
+    //             status = "F";
+    //             bloodBankLoginLogRepository.save(new BloodBankLoginLog(user.getId(), loginTime, status));
+    //             return ResponseEntity.badRequest().body("Incorrect password. Please try again.");
+    //         }
+    //     }
+    // }
+
     @PostMapping("/login")
-    public ResponseEntity<String> loginBloodBank(@RequestBody BloodBank bloodBank) {
-        // Extract mobile number and password from the User object
+    public ResponseEntity<Map<String, Object>> loginBloodBank(@RequestBody BloodBank bloodBank) {
         String email = bloodBank.getEmail();
         String password = bloodBank.getPassword();
-
-        // Query the database for a user with the given mobile number
         BloodBank user = bloodBankRepository.findByEmail(email);
-
-        // Record the login attempt with the current timestamp
         LocalDateTime loginTime = LocalDateTime.now();
         String status;
+        Map<String, Object> response = new HashMap<>();
 
         if (user == null) {
-            // If user is not found, log the failure
             status = "F";
             bloodBankLoginLogRepository.save(new BloodBankLoginLog(null, loginTime, status));
-            return ResponseEntity.badRequest().body("No account associated with mobile number: " + email + ". Please register.");
+            response.put("success", false);
+            response.put("message", "No account associated with email: " + email + ". Please register.");
+            return ResponseEntity.badRequest().body(response);
         } else {
-            // If user exists, check if the password matches
             if (user.getPassword().equals(password)) {
-                // Log the successful login
                 status = "S";
                 bloodBankLoginLogRepository.save(new BloodBankLoginLog(user.getId(), loginTime, status));
-                return ResponseEntity.ok("Login successful for user: " + user.getBloodBankName());
+                response.put("success", true);
+                response.put("message", "Login successful for user: " + user.getBloodBankName());
+                return ResponseEntity.ok(response);
             } else {
-                // Log the failure due to incorrect password
                 status = "F";
                 bloodBankLoginLogRepository.save(new BloodBankLoginLog(user.getId(), loginTime, status));
-                return ResponseEntity.badRequest().body("Incorrect password. Please try again.");
+                response.put("success", false);
+                response.put("message", "Incorrect password. Please try again.");
+                return ResponseEntity.badRequest().body(response);
             }
         }
     }
