@@ -20,9 +20,9 @@ public class PasswordResetRequest {
     public PasswordResetRequest() {
     }
 
-    public PasswordResetRequest(String mobileNo, String otp, LocalDateTime requestTime) {
+    public PasswordResetRequest(String mobileNo,  LocalDateTime requestTime) {
         this.mobileNo = mobileNo;
-        this.otp = otp;
+
         this.requestTime = requestTime;
     }
 
